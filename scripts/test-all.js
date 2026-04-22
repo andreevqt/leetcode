@@ -36,20 +36,38 @@ for (const file of taskFiles) {
 
   const title = meta && meta.title ? meta.title : '(untitled)';
   const difficulty = meta && meta.difficulty ? meta.difficulty : '?';
-  const cases = tests();
-  let passed = 0;
+  const raw = tests();
+  // support both old format (plain array) and new format ({ type, cases })
+  const suite = Array.isArray(raw) ? { type: 'function', cases: raw } : raw;
+  const { type, cases } = suite;
 
-  for (const { input, expected } of cases) {
-    const result = solution(...input);
-    if (JSON.stringify(result) === JSON.stringify(expected)) passed++;
+  let passed = 0;
+  let caseCount = cases.length;
+
+  if (type === 'class') {
+    const { factory } = suite;
+    for (const ops of cases) {
+      const instance = factory();
+      const allOpsPass = ops.every(({ method, args, expected }) => {
+        const result = instance[method](...args);
+        return JSON.stringify(result) === JSON.stringify(expected);
+      });
+      if (allOpsPass) passed++;
+    }
+  } else {
+    for (const { input, expected } of cases) {
+      const result = solution(...input);
+      if (JSON.stringify(result) === JSON.stringify(expected)) passed++;
+    }
   }
 
-  const allPass = passed === cases.length;
+  const allPass = passed === caseCount;
   const status = allPass ? '✅' : '❌';
-  console.log(`${status} Task #${taskNum} [${difficulty}] ${title} — ${passed}/${cases.length} tests`);
+  const typeLabel = type === 'class' ? '🏗️' : '🔧';
+  console.log(`${status} ${typeLabel} Task #${taskNum} [${difficulty}] ${title} — ${passed}/${caseCount} tests`);
 
   totalPassed += passed;
-  totalCases += cases.length;
+  totalCases += caseCount;
   totalTasks++;
   if (!allPass) failedTasks++;
 }

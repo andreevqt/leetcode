@@ -24,6 +24,8 @@ const template = `const meta = {
   tags: [],
 };
 
+// ─── Option A: single function ────────────────────────────────────────────────
+
 /**
  * @param {}
  * @return {}
@@ -32,11 +34,40 @@ function solution() {
   // TODO: implement
 }
 
+// ─── Option B: design / class-based ──────────────────────────────────────────
+
+// class Solution {
+//   constructor() {}
+//
+//   method() {
+//     // TODO: implement
+//   }
+// }
+
+// ─── Tests ────────────────────────────────────────────────────────────────────
+
 function tests() {
-  return [
-    { input: [], expected: null },
-    // { input: [], expected: null },
-  ];
+  // --- Option A: function-based ---
+  return {
+    type: 'function',
+    cases: [
+      { input: [], expected: null },
+      // { input: [], expected: null },
+    ],
+  };
+
+  // --- Option B: class-based ---
+  // Each case is a sequence of operations on a fresh instance.
+  // return {
+  //   type: 'class',
+  //   factory: () => new Solution(),
+  //   cases: [
+  //     [
+  //       { method: 'someMethod', args: [1], expected: null },
+  //       { method: 'someMethod', args: [2], expected: 3 },
+  //     ],
+  //   ],
+  // };
 }
 
 module.exports = { meta, solution, tests };
