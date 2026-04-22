@@ -25,7 +25,13 @@ leetcode/
 
 ## Task Types
 
-### 🔧 Function-based (classic LeetCode)
+The runner auto-detects the task type based on what the file exports:
+- exports `solution` (function) → **function mode** 🔧
+- exports `Solution` (class) → **class mode** 🏗️
+
+### Function-based (classic LeetCode)
+
+`tests()` returns an array of `{ input, expected }` objects:
 
 ```js
 const meta = {
@@ -40,19 +46,19 @@ function solution(nums, target) {
 }
 
 function tests() {
-  return {
-    type: 'function',
-    cases: [
-      { input: [[2, 7, 11, 15], 9], expected: [0, 1] },
-      { input: [[3, 2, 4], 6],      expected: [1, 2] },
-    ],
-  };
+  return [
+    { input: [[2, 7, 11, 15], 9], expected: [0, 1] },
+    { input: [[3, 2, 4], 6],      expected: [1, 2] },
+  ];
 }
 
 module.exports = { meta, solution, tests };
 ```
 
-### 🏗️ Class-based (design problems, e.g. NeetCode)
+### Class-based (design problems, e.g. NeetCode)
+
+`tests()` returns an array of test cases, where each case is an array of operations
+executed sequentially on a **fresh `Solution` instance**:
 
 ```js
 const meta = {
@@ -66,27 +72,29 @@ class Solution {
   constructor() {}
 
   insertHead(val) { /* ... */ }
-  insertTail(val) { /* ... */ }
   get(index)      { /* ... */ }
   remove(index)   { /* ... */ }
 }
 
 function tests() {
-  return {
-    type: 'class',
-    factory: () => new Solution(),   // fresh instance per case
-    cases: [
-      [
-        { method: 'insertHead', args: [1], expected: undefined },
-        { method: 'insertTail', args: [2], expected: undefined },
-        { method: 'get',        args: [0], expected: 1 },
-        { method: 'remove',     args: [0], expected: true },
-      ],
+  return [
+    // case 1 — fresh instance
+    [
+      { method: 'insertHead', args: [1], expected: undefined },
+      { method: 'insertHead', args: [2], expected: undefined },
+      { method: 'get',        args: [0], expected: 2 },
+      { method: 'remove',     args: [1], expected: true },
     ],
-  };
+    // case 2 — another fresh instance
+    [
+      { method: 'insertHead', args: [5], expected: undefined },
+      { method: 'get',        args: [0], expected: 5 },
+    ],
+  ];
 }
 
-module.exports = { meta, tests };
+// Export Solution (capital S) — runner detects class mode automatically
+module.exports = { meta, Solution, tests };
 ```
 
 ## Usage

@@ -35,6 +35,7 @@ function solution() {
 }
 
 // ─── Option B: design / class-based ──────────────────────────────────────────
+// Export \`Solution\` instead of \`solution\` — the runner detects it automatically.
 
 // class Solution {
 //   constructor() {}
@@ -48,29 +49,23 @@ function solution() {
 
 function tests() {
   // --- Option A: function-based ---
-  return {
-    type: 'function',
-    cases: [
-      { input: [], expected: null },
-      // { input: [], expected: null },
-    ],
-  };
+  return [
+    { input: [], expected: null },
+    // { input: [], expected: null },
+  ];
 
   // --- Option B: class-based ---
-  // Each case is a sequence of operations on a fresh instance.
-  // return {
-  //   type: 'class',
-  //   factory: () => new Solution(),
-  //   cases: [
-  //     [
-  //       { method: 'someMethod', args: [1], expected: null },
-  //       { method: 'someMethod', args: [2], expected: 3 },
-  //     ],
+  // Each case is a sequence of operations on a fresh Solution instance.
+  // return [
+  //   [
+  //     { method: 'someMethod', args: [1], expected: null },
+  //     { method: 'someMethod', args: [2], expected: 3 },
   //   ],
-  // };
+  // ];
 }
 
 module.exports = { meta, solution, tests };
+// For class-based tasks use: module.exports = { meta, Solution, tests };
 `;
 
 fs.writeFileSync(filePath, template, 'utf8');

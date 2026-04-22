@@ -5,8 +5,6 @@ const meta = {
   tags: ['LinkedList', 'Design'],
 };
 
-// ─── Option B: design / class-based ──────────────────────────────────────────
-
 class Node {
   constructor(val) {
     this.val = val;
@@ -70,26 +68,20 @@ class Solution {
   }
 }
 
-// ─── Tests ────────────────────────────────────────────────────────────────────
-
 function tests() {
-  return {
-    type: 'class',
-    factory: () => new Solution(),
-    cases: [
-      [
-        { method: 'insertHead', args: [1], expected: undefined },
-        { method: 'insertTail', args: [2], expected: undefined },
-        { method: 'insertTail', args: [3], expected: undefined },
-        { method: 'get', args: [0], expected: 1 },
-        { method: 'get', args: [1], expected: 2 },
-        { method: 'get', args: [2], expected: 3 },
-        { method: 'remove', args: [1], expected: true },
-        { method: 'getValues', args: [], expected: [1, 3] },
-        { method: 'get', args: [5], expected: -1 },
-      ],
+  return [
+    [
+      { method: 'insertHead', args: [1], expected: undefined },
+      { method: 'insertTail', args: [2], expected: undefined },
+      { method: 'insertTail', args: [3], expected: undefined },
+      { method: 'get',        args: [0], expected: 1 },
+      { method: 'get',        args: [1], expected: 2 },
+      { method: 'get',        args: [2], expected: 3 },
+      { method: 'remove',     args: [1], expected: true },
+      { method: 'getValues',  args: [],  expected: [1, 3] },
+      { method: 'get',        args: [5], expected: -1 },
     ],
-  };
+  ];
 }
 
-module.exports = { meta, tests };
+module.exports = { meta, Solution, tests };

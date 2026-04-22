@@ -10,9 +10,9 @@ if (!taskNum || isNaN(Number(taskNum))) {
 
 const taskFile = path.join(__dirname, '..', 'tasks', `task-${taskNum}.js`);
 
-let meta, solution, tests;
+let taskModule;
 try {
-  ({ meta, solution, tests } = require(taskFile));
+  taskModule = require(taskFile);
 } catch (e) {
   if (e.code === 'MODULE_NOT_FOUND') {
     console.error(`Task file not found: tasks/task-${taskNum}.js`);
@@ -21,24 +21,24 @@ try {
   throw e;
 }
 
+const { meta, solution, Solution, tests } = taskModule;
+
 if (meta && meta.title) {
   console.log(`\n📋 Task #${taskNum}: ${meta.title} [${meta.difficulty}]`);
   console.log(`🔗 ${meta.link}\n`);
 }
 
-const raw = tests();
-// support both old format (plain array) and new format ({ type, cases })
-const suite = Array.isArray(raw) ? { type: 'function', cases: raw } : raw;
-const { type, cases } = suite;
+const isClassMode = typeof Solution === 'function';
+const suite = tests();
+// support both old plain-array format and new { type, cases } format
+const cases = Array.isArray(suite) ? suite : suite.cases;
 
 let passed = 0;
 let total = 0;
 
-if (type === 'class') {
-  const { factory } = suite;
-
+if (isClassMode) {
   for (const [caseIdx, ops] of cases.entries()) {
-    const instance = factory();
+    const instance = new Solution();
     let casePassed = true;
 
     for (const [opIdx, { method, args, expected }] of ops.entries()) {
@@ -61,7 +61,6 @@ if (type === 'class') {
     if (casePassed) passed++;
   }
 } else {
-  // type === 'function' (default)
   for (const [i, { input, expected }] of cases.entries()) {
     const start = performance.now();
     const result = solution(...input);

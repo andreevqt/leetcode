@@ -25,29 +25,29 @@ for (const file of taskFiles) {
   const taskNum = file.match(/^task-(\d+)\.js$/)[1];
   const taskFile = path.join(tasksDir, file);
 
-  let meta, solution, tests;
+  let taskModule;
   try {
-    ({ meta, solution, tests } = require(taskFile));
+    taskModule = require(taskFile);
   } catch (e) {
     console.error(`❌ Error loading tasks/${file}: ${e.message}`);
     failedTasks++;
     continue;
   }
 
+  const { meta, solution, Solution, tests } = taskModule;
   const title = meta && meta.title ? meta.title : '(untitled)';
   const difficulty = meta && meta.difficulty ? meta.difficulty : '?';
-  const raw = tests();
-  // support both old format (plain array) and new format ({ type, cases })
-  const suite = Array.isArray(raw) ? { type: 'function', cases: raw } : raw;
-  const { type, cases } = suite;
+
+  const suite = tests();
+  const cases = Array.isArray(suite) ? suite : suite.cases;
+  const isClassMode = typeof Solution === 'function';
 
   let passed = 0;
-  let caseCount = cases.length;
+  const caseCount = cases.length;
 
-  if (type === 'class') {
-    const { factory } = suite;
+  if (isClassMode) {
     for (const ops of cases) {
-      const instance = factory();
+      const instance = new Solution();
       const allOpsPass = ops.every(({ method, args, expected }) => {
         const result = instance[method](...args);
         return JSON.stringify(result) === JSON.stringify(expected);
@@ -63,7 +63,7 @@ for (const file of taskFiles) {
 
   const allPass = passed === caseCount;
   const status = allPass ? '✅' : '❌';
-  const typeLabel = type === 'class' ? '🏗️' : '🔧';
+  const typeLabel = isClassMode ? '🏗️' : '🔧';
   console.log(`${status} ${typeLabel} Task #${taskNum} [${difficulty}] ${title} — ${passed}/${caseCount} tests`);
 
   totalPassed += passed;
