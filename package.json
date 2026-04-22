@@ -1,0 +1,19 @@
+{
+  "name": "leetcode",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-task": "node scripts/generate-task.js",
+    "test-task": "node scripts/run-task.js",
+    "test-all": "node scripts/test-all.js",
+    "watch": "nodemon --watch tasks --ext js --exec \"node scripts/run-task.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
